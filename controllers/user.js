@@ -1,6 +1,7 @@
 import _ from "lodash";
 import bcrypt from "bcrypt";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
 	try {
@@ -15,7 +16,8 @@ export const registerUser = async (req, res) => {
 
 		await user.save();
 
-		return res.status(201).json(_.pick(user, ["_id", "email"]));
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+		res.header("x-auth-token", token).json(_.pick(user, ["_id", "email"]));
 	} catch (error) {
 		return res.status(500).json(error.message);
 	}

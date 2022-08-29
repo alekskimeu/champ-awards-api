@@ -8,14 +8,16 @@ import {
     incrementVotes
 } from '../controllers/contestant.js'
 
-const router = express.Router()
+import { auth } from "../middleware/auth.js";
 
-router.get('/', fetchContestants);
-router.post('/', createContestant);
+const router = express.Router();
+
+router.get("/", fetchContestants);
+router.post("/", auth, createContestant);
 router.get('/:id', fetchContestant);
-router.put('/:id', updateContestant);
-router.put('/polls/:contestantId', incrementVotes);
-router.delete('/:id', deleteContestant);
+router.put("/:id", auth, updateContestant);
+router.put("/polls/:contestantId", incrementVotes);
+router.delete("/:id", auth, deleteContestant);
 
 
 export default router
