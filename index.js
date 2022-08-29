@@ -6,6 +6,7 @@ import cors from 'cors'
 
 import contestantsRoutes from './routes/contestants.js'
 import eventsRoutes from './routes/events.js'
+import usersRoutes from "./routes/users.js";
 
 dotenv.config()
 
@@ -31,6 +32,7 @@ app.use(cors());
 // Routes
 app.use('/api/contestants', contestantsRoutes)
 app.use('/api/events', eventsRoutes)
+app.use("/api/users", usersRoutes);
 
 // Start server
 app.listen(PORT, () => {
