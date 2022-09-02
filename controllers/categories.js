@@ -1,10 +1,15 @@
 import Category from "../models/category.js";
+import db from "../utils/db.js";
 
 // Fetch all Categories
 export const fetchCategories = async (req, res) => {
+	let sql = "SELECT * FROM categories";
+
 	try {
-		const categories = await Category.find();
-		res.status(200).json(categories);
+		let query = db.query(sql, (err, results) => {
+			if (err) throw err;
+			res.status(200).json(results);
+		});
 	} catch (error) {
 		res.status(500).json(error.message);
 	}
@@ -22,12 +27,16 @@ export const fetchCategory = async (req, res) => {
 
 // Create Category
 export const createCategory = async (req, res) => {
-	const newCategory = new Category(req.body);
+	const newCategory = req.body;
+	let sql = "INSERT INTO categories SET ?";
+
 	try {
-		const category = await newCategory.save();
-		res.status(200).json(category);
+		let query = db.query(sql, newCategory, (err, results) => {
+			if (err) throw err;
+			res.status(201).json(results[0]);
+		});
 	} catch (error) {
-		res.status(500).json(error.message);
+		console.log(error.message);
 	}
 };
 

@@ -1,12 +1,16 @@
 import Event from "../models/event.js";
 
-import cloudinary from "../utils/cloudinary.js";
+import db from "../utils/db.js";
 
 // Fetch all Events
 export const fetchEvents = async (req, res) => {
+	let sql = "SELECT * FROM events";
+
 	try {
-		const events = await Event.find().sort({ votes: -1 });
-		res.status(200).json(events);
+		let query = db.query(sql, (err, results) => {
+			if (err) throw err;
+			res.status(200).json(results);
+		});
 	} catch (error) {
 		res.status(500).json(error.message);
 	}
@@ -24,23 +28,20 @@ export const fetchEvent = async (req, res) => {
 
 // Create Event
 export const createEvent = async (req, res) => {
-	const { name, date, description, image } = req.body;
-	console.log(cloudinary);
-	try {
-		const result = await cloudinary.uploader.upload(image, {
-			folder: "events",
-		});
+	const { name, date, description, imageName } = req.body;
 
-		const event = await Event.create({
-			name,
-			date,
-			description,
-			image: {
-				public_id: result.public_id,
-				url: result.secure_url,
-			},
-		});
-		res.status(200).json(event);
+	let sql =
+		"INSERT INTO events (name, date, description, image) VALUES (?, ?, ?, ?)";
+
+	try {
+		let query = db.query(
+			sql,
+			[name, date, description, imageName],
+			(err, results) => {
+				if (err) throw err;
+				res.status(201).json(results[0]);
+			}
+		);
 	} catch (error) {
 		console.log(error.message);
 	}
